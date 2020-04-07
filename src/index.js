@@ -21,7 +21,8 @@ class Board extends React.Component {
   }
 
   render() {
-    return React.createElement( // create board element
+    return React.createElement(
+      // create board element
       "div",
       null,
       new Array(3) // create row elements
@@ -49,6 +50,7 @@ class Game extends React.Component {
           move: null,
         },
       ],
+      ascending: true,
       stepNumber: 0,
       xIsNext: true,
     };
@@ -93,7 +95,7 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((step, move) => {
+    let moves = history.map((step, move) => {
       let desc = move ? "Go to move #." + move : "Go to game start.";
       desc += step.move ? " " + step.move : "";
       if (move === this.state.stepNumber) {
@@ -105,6 +107,9 @@ class Game extends React.Component {
         </li>
       );
     });
+    if (!this.state.ascending) {
+      moves = moves.reverse();
+    }
 
     let status;
     if (winner) {
@@ -123,6 +128,11 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button
+            onClick={() => this.setState({ ascending: !this.state.ascending })}
+          >
+            {this.state.ascending ? "ascending" : "descending"}
+          </button>
           <ol>{moves}</ol>
         </div>
       </div>
