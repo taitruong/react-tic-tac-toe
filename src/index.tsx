@@ -10,7 +10,7 @@ function Square(props: {
   return (
     <button
       className={"square" + (props.highlight ? " square-highlight" : "")}
-      onClick={() => props.onClick()}
+      onClick={props.onClick}
     >
       {props.value}
     </button>
@@ -62,7 +62,7 @@ function Toggle(props: { toggled: boolean; onClick: () => void }) {
 
 type Move = {
   squares: string[];
-  move: string;
+  description: string;
 };
 
 type GampeState = {
@@ -79,7 +79,7 @@ class Game extends React.Component<{}, GampeState> {
       history: [
         {
           squares: Array(9).fill(null),
-          move: "Go to game start.",
+          description: "Go to game start.",
         },
       ],
       ascending: true,
@@ -97,7 +97,7 @@ class Game extends React.Component<{}, GampeState> {
     }
     const player = this.state.xIsNext ? "X" : "O";
     squares[i] = player;
-    const move =
+    const description =
       "Go to move #" +
       history.length +
       ". " +
@@ -110,7 +110,7 @@ class Game extends React.Component<{}, GampeState> {
       history: history.concat([
         {
           squares,
-          move,
+          description,
         },
       ]),
       stepNumber: history.length,
@@ -131,15 +131,15 @@ class Game extends React.Component<{}, GampeState> {
     const winnerRow = calculateWinner(current.squares);
 
     let moves = history.map((step, move) => {
+      const moveDescription =
+        move === this.state.stepNumber ? ( // highlight/make bold for current step
+          <strong>{step.description}</strong>
+        ) : (
+          step.description
+        );
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>
-            {move === this.state.stepNumber ? ( // highlight/make bold for current step
-              <strong>{step.move}</strong>
-            ) : (
-              step.move
-            )}
-          </button>
+          <button onClick={() => this.jumpTo(move)}>{moveDescription}</button>
         </li>
       );
     });
@@ -166,7 +166,10 @@ class Game extends React.Component<{}, GampeState> {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <Toggle toggled={this.state.ascending} onClick={() => this.setState({ ascending: !this.state.ascending })}/>
+          <Toggle
+            toggled={this.state.ascending}
+            onClick={() => this.setState({ ascending: !this.state.ascending })}
+          />
           <ol>{moves}</ol>
         </div>
       </div>
