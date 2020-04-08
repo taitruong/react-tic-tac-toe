@@ -17,7 +17,10 @@ function Square(props: {
   );
 }
 
-class Board extends React.Component<{squares: string[], onClick: (i: number) => void}> {
+class Board extends React.Component<{
+  squares: string[];
+  onClick: (i: number) => void;
+}> {
   renderSquare(i: number) {
     const winnerRow = calculateWinner(this.props.squares);
     return (
@@ -47,6 +50,14 @@ class Board extends React.Component<{squares: string[], onClick: (i: number) => 
         )
     );
   }
+}
+
+function Toggle(props: { toggled: boolean; onClick: () => void }) {
+  return (
+    <button onClick={props.onClick}>
+      {props.toggled ? "Ascending" : "Descending"}
+    </button>
+  );
 }
 
 type Move = {
@@ -94,7 +105,7 @@ class Game extends React.Component<{}, GampeState> {
       " moves: col " +
       ((i % 3) + 1) +
       ", row " +
-      (Math.floor((i / 3) + 1));
+      Math.floor(i / 3 + 1);
     this.setState({
       history: history.concat([
         {
@@ -155,11 +166,7 @@ class Game extends React.Component<{}, GampeState> {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <button
-            onClick={() => this.setState({ ascending: !this.state.ascending })}
-          >
-            {this.state.ascending ? "ascending" : "descending"}
-          </button>
+          <Toggle toggled={this.state.ascending} onClick={() => this.setState({ ascending: !this.state.ascending })}/>
           <ol>{moves}</ol>
         </div>
       </div>
